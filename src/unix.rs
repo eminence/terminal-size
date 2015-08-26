@@ -13,6 +13,9 @@ struct WinSize {
     ws_ypixel: c_ushort
 }
 
+/// Returns the size of the terminal, if available.
+///
+/// If STDIN is not a tty, returns `None`
 pub fn terminal_size() -> Option<(Width, Height)> {
     use self::libc::{isatty, STDIN_FILENO};
     use self::libc::funcs::bsd44::ioctl;

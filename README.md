@@ -1,4 +1,6 @@
 # terminal-size
-Rust library to getting the size of your terminal
+Rust library to getting the size of your terminal.
 
-Work in progress
+Works on Linux and Windows, but needs testing on other platforms
+
+See the documentation for an example
