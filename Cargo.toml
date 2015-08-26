@@ -6,4 +6,5 @@ authors = ["Andrew Chin <achin@eminence32.net>"]
 
 [dependencies]
 libc = "0.1"
-
+winapi = "0.2"
+kernel32-sys = "0.1"

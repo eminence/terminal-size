@@ -1,6 +1,7 @@
 extern crate libc;
 use std::os::raw::*;
 
+use super::{Width, Height};
 
 const TIOCGWINSZ: c_int = 0x00005413;
 
@@ -12,7 +13,7 @@ struct WinSize {
     ws_ypixel: c_ushort
 }
 
-pub fn terminal_size() -> Option<(u16, u16)> {
+pub fn terminal_size() -> Option<(Width, Height)> {
     use self::libc::{isatty, STDIN_FILENO};
     use self::libc::funcs::bsd44::ioctl;
     let is_tty: bool = unsafe{isatty(STDIN_FILENO) == 1};
@@ -29,7 +30,7 @@ pub fn terminal_size() -> Option<(u16, u16)> {
     };
 
     if rows > 0 && cols > 0 {
-        Some((rows, cols))
+        Some((Width(cols), Height(rows)))
     } else {
         None
     }
