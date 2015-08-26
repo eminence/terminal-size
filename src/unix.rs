@@ -13,8 +13,8 @@ struct WinSize {
 }
 
 pub fn terminal_size() -> Option<(u16, u16)> {
-    use libc::{isatty, STDIN_FILENO};
-    use libc::funcs::bsd44::ioctl;
+    use self::libc::{isatty, STDIN_FILENO};
+    use self::libc::funcs::bsd44::ioctl;
     let is_tty: bool = unsafe{isatty(STDIN_FILENO) == 1};
 
     if !is_tty { return None; }

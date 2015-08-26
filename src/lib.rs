@@ -1,8 +1,6 @@
 
 
 #[cfg(unix)]
-extern crate libc;
-#[cfg(unix)]
 mod unix;
 #[cfg(unix)]
 pub use unix::terminal_size;
