@@ -1,0 +1,9 @@
+[package]
+name = "terminal_size"
+version = "0.1.0"
+authors = ["Andrew Chin <achin@eminence32.net>"]
+
+
+[target.x86_64-unknown-linux-gnu.dependencies]
+libc = "0.1"
+
