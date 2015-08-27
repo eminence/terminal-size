@@ -26,7 +26,6 @@ pub fn terminal_size() -> Option<(Width, Height)> {
     let (rows, cols) = unsafe {
         let mut winsize = WinSize{ws_row: 0, ws_col: 0, ws_xpixel: 0, ws_ypixel: 0};
         ioctl(STDIN_FILENO, TIOCGWINSZ, &mut winsize);
-        println!("{:?}", winsize);
         let rows = if winsize.ws_row > 0 { winsize.ws_row } else { 0 };
         let cols = if winsize.ws_col > 0 { winsize.ws_col } else { 0 };
         (rows as u16, cols as u16)
