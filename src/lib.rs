@@ -2,6 +2,8 @@
 //! 
 //! Supports both Linux and Windows, but help is needed to test other platforms
 //!
+//! Tested on Rust Stable (1.4), Beta (1.5), and Nightly (1.6)
+//!
 //! # Example
 //!
 //! ```
