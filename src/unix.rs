@@ -3,7 +3,7 @@ use std::os::raw::*;
 
 use super::{Width, Height};
 
-const TIOCGWINSZ: c_int = 0x00005413;
+const TIOCGWINSZ: c_ulong = 0x00005413;
 
 #[derive(Debug)]
 struct WinSize {
@@ -18,7 +18,7 @@ struct WinSize {
 /// If STDOUT is not a tty, returns `None`
 pub fn terminal_size() -> Option<(Width, Height)> {
     use self::libc::{isatty, STDOUT_FILENO};
-    use self::libc::funcs::bsd44::ioctl;
+    use self::libc::ioctl;
     let is_tty: bool = unsafe{isatty(STDOUT_FILENO) == 1};
 
     if !is_tty { return None; }
