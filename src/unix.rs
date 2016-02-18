@@ -3,7 +3,7 @@ use std::os::raw::*;
 
 use super::{Width, Height};
 
-const TIOCGWINSZ: c_int = 0x00005413;
+const TIOCGWINSZ: u64 = 0x00005413;
 
 #[derive(Debug)]
 struct WinSize {
