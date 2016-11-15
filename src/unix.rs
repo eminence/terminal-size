@@ -3,6 +3,9 @@ use std::os::raw::*;
 
 use super::{Width, Height};
 
+#[cfg(target_env="musl")]
+const TIOCGWINSZ: c_int = 0x00005413;
+#[cfg(not(target_env="musl"))]
 const TIOCGWINSZ: c_ulong = 0x00005413;
 
 #[derive(Debug)]
