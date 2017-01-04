@@ -3,9 +3,11 @@ use std::os::raw::*;
 
 use super::{Width, Height};
 
-#[cfg(target_env="musl")]
+#[cfg(target_os="macos")]
+const TIOCGWINSZ: c_ulong  = 0x40087468;
+#[cfg(all(target_env="musl", not(target_os="macos")))]
 const TIOCGWINSZ: c_int = 0x00005413;
-#[cfg(not(target_env="musl"))]
+#[cfg(all(not(target_env="musl"), not(target_os="macos")))]
 const TIOCGWINSZ: c_ulong = 0x00005413;
 
 #[derive(Debug)]
@@ -47,7 +49,11 @@ fn compare_with_stty() {
     use std::process::Command;
     use std::process::Stdio;
 
-    let output = Command::new("stty").arg("size").arg("-F").arg("/dev/stderr").stderr(Stdio::inherit()).output().unwrap();
+    let output = if cfg!(target_os = "macos") {
+        Command::new("stty").arg("-f").arg("/dev/stderr").arg("size").stderr(Stdio::inherit()).output().unwrap()
+    } else {
+        Command::new("stty").arg("size").arg("-F").arg("/dev/stderr").stderr(Stdio::inherit()).output().unwrap()
+    };
     let stdout = String::from_utf8(output.stdout).unwrap();
     assert!(output.status.success());
     // stdout is "rows cols"
@@ -61,6 +67,4 @@ fn compare_with_stty() {
         assert_eq!(rows, h);
         assert_eq!(cols, w);
     }
-
-
 }
