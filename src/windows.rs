@@ -1,6 +1,5 @@
 
 extern crate winapi;
-extern crate kernel32;
 
 use super::{Width, Height};
 
@@ -9,10 +8,10 @@ use super::{Width, Height};
 /// Note that this returns the size of the actual command window, and
 /// not the overall size of the command window buffer
 pub fn terminal_size() -> Option<(Width, Height)> {
-    use self::winapi::{DWORD, HANDLE};
-    use self::kernel32::{GetStdHandle, GetConsoleScreenBufferInfo};
-    use self::winapi::{STD_INPUT_HANDLE, STD_OUTPUT_HANDLE};
-    use self::winapi::{CONSOLE_SCREEN_BUFFER_INFO, COORD, SMALL_RECT};
+    use self::winapi::um::winnt::HANDLE;
+    use self::winapi::um::processenv::{GetStdHandle};
+    use self::winapi::um::winbase::{STD_INPUT_HANDLE, STD_OUTPUT_HANDLE};
+    use self::winapi::um::wincon::{GetConsoleScreenBufferInfo, CONSOLE_SCREEN_BUFFER_INFO, COORD, SMALL_RECT};
 
     let hand: HANDLE = unsafe {
         GetStdHandle(STD_OUTPUT_HANDLE)
