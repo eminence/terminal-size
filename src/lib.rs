@@ -27,6 +27,7 @@ pub struct Height(pub u16);
 mod unix;
 #[cfg(unix)]
 pub use unix::terminal_size;
+pub use unix::terminal_size_using_fd;
 
 #[cfg(windows)]
 mod windows;

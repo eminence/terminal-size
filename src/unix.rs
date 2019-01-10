@@ -1,5 +1,6 @@
 extern crate libc;
 use std::os::raw::*;
+use std::os::unix::io::RawFd;
 
 use super::{Height, Width};
 
@@ -18,13 +19,21 @@ struct WinSize {
     ws_ypixel: c_ushort,
 }
 
-/// Returns the size of the terminal, if available.
+/// Returns the size of the terminal defaulting to STDOUT, if available.
 ///
 /// If STDOUT is not a tty, returns `None`
 pub fn terminal_size() -> Option<(Width, Height)> {
+    use self::libc::STDOUT_FILENO;
+    terminal_size_using_fd(STDOUT_FILENO)
+}
+
+/// Returns the size of the terminal using the given file descriptor, if available.
+///
+/// If the given file descriptor is not a tty, returns `None`
+pub fn terminal_size_using_fd(fd: RawFd) -> Option<(Width, Height)> {
     use self::libc::ioctl;
-    use self::libc::{isatty, STDOUT_FILENO};
-    let is_tty: bool = unsafe { isatty(STDOUT_FILENO) == 1 };
+    use self::libc::isatty;
+    let is_tty: bool = unsafe { isatty(fd) == 1 };
 
     if !is_tty {
         return None;
@@ -37,7 +46,7 @@ pub fn terminal_size() -> Option<(Width, Height)> {
             ws_xpixel: 0,
             ws_ypixel: 0,
         };
-        ioctl(STDOUT_FILENO, TIOCGWINSZ, &mut winsize);
+        ioctl(fd, TIOCGWINSZ, &mut winsize);
         let rows = if winsize.ws_row > 0 {
             winsize.ws_row
         } else {
