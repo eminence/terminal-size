@@ -1,5 +1,5 @@
 //! A simple utility for getting the size of a terminal.  
-//! 
+//!
 //! Supports both Linux and Windows, but help is needed to test other platforms
 //!
 //! Tested on Rust Stable (1.4), Beta (1.5), and Nightly (1.6)
@@ -28,10 +28,7 @@ mod unix;
 #[cfg(unix)]
 pub use unix::terminal_size;
 
-
 #[cfg(windows)]
 mod windows;
 #[cfg(windows)]
 pub use windows::terminal_size;
-
-
