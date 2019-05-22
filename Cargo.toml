@@ -7,6 +7,7 @@ documentation = "http://eminence.github.io/terminal-size/doc/terminal_size/index
 repository = "https://github.com/eminence/terminal-size"
 keywords = ["terminal", "console", "term", "size", "dimensions"]
 license = "MIT OR Apache-2.0"
+edition = "2018"
 
 
 [dependencies]
