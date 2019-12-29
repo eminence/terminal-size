@@ -26,8 +26,7 @@ pub struct Height(pub u16);
 #[cfg(unix)]
 mod unix;
 #[cfg(unix)]
-pub use crate::unix::terminal_size;
-pub use crate::unix::terminal_size_using_fd;
+pub use crate::unix::{terminal_size, terminal_size_using_fd};
 
 #[cfg(windows)]
 mod windows;
