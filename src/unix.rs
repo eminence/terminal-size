@@ -77,5 +77,7 @@ fn compare_with_stty() {
     if let Some((Width(w), Height(h))) = terminal_size() {
         assert_eq!(rows, h);
         assert_eq!(cols, w);
+    } else {
+        panic!("terminal_size() return None");
     }
 }
