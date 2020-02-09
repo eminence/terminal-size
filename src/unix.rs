@@ -48,19 +48,19 @@ fn compare_with_stty() {
     use std::process::Command;
     use std::process::Stdio;
 
-    let output = if cfg!(target_os = "macos") {
+    let output = if cfg!(target_os = "linux") {
         Command::new("stty")
-            .arg("-f")
-            .arg("/dev/stderr")
             .arg("size")
+            .arg("-F")
+            .arg("/dev/stderr")
             .stderr(Stdio::inherit())
             .output()
             .unwrap()
     } else {
         Command::new("stty")
-            .arg("size")
-            .arg("-F")
+            .arg("-f")
             .arg("/dev/stderr")
+            .arg("size")
             .stderr(Stdio::inherit())
             .output()
             .unwrap()
