@@ -28,7 +28,7 @@ pub fn terminal_size_using_fd(fd: RawFd) -> Option<(Width, Height)> {
         ws_ypixel: 0,
     };
 
-    if unsafe { ioctl(fd, TIOCGWINSZ, &mut winsize) } == -1 {
+    if unsafe { ioctl(fd, TIOCGWINSZ.into(), &mut winsize) } == -1 {
         return None;
     }
 
