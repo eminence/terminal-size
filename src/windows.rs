@@ -31,7 +31,7 @@ pub fn terminal_size() -> Option<(Width, Height)> {
         },
         dwMaximumWindowSize: zc,
     };
-    if unsafe { GetConsoleScreenBufferInfo(hand, &mut csbi) } != 0 {
+    if unsafe { GetConsoleScreenBufferInfo(hand, &mut csbi) } == 0 {
         return None;
     }
 
