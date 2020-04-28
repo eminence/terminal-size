@@ -1,6 +1,6 @@
 [package]
 name = "terminal_size"
-version = "0.1.11"
+version = "0.1.12"
 authors = ["Andrew Chin <achin@eminence32.net>"]
 description = "Gets the size of your Linux or Windows terminal"
 documentation = "http://eminence.github.io/terminal-size/doc/terminal_size/index.html"
