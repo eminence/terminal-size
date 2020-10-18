@@ -1,18 +1,30 @@
 use super::{Height, Width};
+use std::os::windows::io::RawHandle;
 
-/// Returns the size of the terminal, if available.
+/// Returns the size of the terminal defaulting to STDOUT, if available.
 ///
 /// Note that this returns the size of the actual command window, and
 /// not the overall size of the command window buffer
 pub fn terminal_size() -> Option<(Width, Height)> {
-    use winapi::um::handleapi::INVALID_HANDLE_VALUE;
     use winapi::um::processenv::GetStdHandle;
     use winapi::um::winbase::STD_OUTPUT_HANDLE;
+
+    let handle = unsafe { GetStdHandle(STD_OUTPUT_HANDLE) as RawHandle };
+
+    terminal_size_using_handle(handle)
+}
+
+/// Returns the size of the terminal using the given handle, if available.
+///
+/// If the given handle is not a tty, returns `None`
+pub fn terminal_size_using_handle(handle: RawHandle) -> Option<(Width, Height)> {
+    use winapi::um::handleapi::INVALID_HANDLE_VALUE;
     use winapi::um::wincon::{
         GetConsoleScreenBufferInfo, CONSOLE_SCREEN_BUFFER_INFO, COORD, SMALL_RECT,
     };
 
-    let hand = unsafe { GetStdHandle(STD_OUTPUT_HANDLE) };
+    // convert between winapi::um::winnt::HANDLE and std::os::windows::raw::HANDLE
+    let hand = unsafe { std::mem::transmute(handle) };
 
     if hand == INVALID_HANDLE_VALUE {
         return None;
