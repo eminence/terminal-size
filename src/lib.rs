@@ -1,8 +1,8 @@
 //! A simple utility for getting the size of a terminal.  
 //!
-//! Supports both Linux and Windows, but help is needed to test other platforms
+//! Supports both Linux, MacOS, and Windows.
 //!
-//! Tested on Rust Stable (1.4), Beta (1.5), and Nightly (1.6)
+//!  This crate requires a minimum rust version of 1.31.0 (2018-12-06)
 //!
 //! # Example
 //!
