@@ -2,14 +2,12 @@ terminal-size
 =============
 
 
-[Documention](https://eminence.github.io/terminal-size/doc/terminal_size/index.html)
+[Documention](https://docs.rs/crate/terminal_size)
 
 
 Rust library to getting the size of your terminal.
 
-Works on Linux and Windows, but needs testing on other platforms
-
-Tested on Rust Stable (1.8), Beta (1.9), and Nightly (1.10)
+Works on Linux, MacOS, and Windows.
 
 ```rust
 use terminal_size::{Width, Height, terminal_size};
