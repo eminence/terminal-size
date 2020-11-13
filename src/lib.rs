@@ -31,4 +31,4 @@ pub use crate::unix::{terminal_size, terminal_size_using_fd};
 #[cfg(windows)]
 mod windows;
 #[cfg(windows)]
-pub use windows::terminal_size;
+pub use windows::{terminal_size, terminal_size_using_handle};
