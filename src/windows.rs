@@ -24,7 +24,7 @@ pub fn terminal_size_using_handle(handle: RawHandle) -> Option<(Width, Height)> 
     };
 
     // convert between winapi::um::winnt::HANDLE and std::os::windows::raw::HANDLE
-    let hand = unsafe { std::mem::transmute(handle) };
+    let hand = handle as winapi::um::winnt::HANDLE;
 
     if hand == INVALID_HANDLE_VALUE {
         return None;
