@@ -7,7 +7,7 @@ terminal-size
 
 Rust library to getting the size of your terminal.
 
-Works on Linux, MacOS, and Windows.
+Works on Linux, MacOS, Windows, and illumos.
 
 ```rust
 use terminal_size::{Width, Height, terminal_size};
