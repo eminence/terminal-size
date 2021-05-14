@@ -1,4 +1,4 @@
-//! A simple utility for getting the size of a terminal.  
+//! A simple utility for getting the size of a terminal.
 //!
 //! Supports both Linux, MacOS, and Windows.
 //!
@@ -31,7 +31,7 @@ pub use crate::unix::{terminal_size, terminal_size_using_fd};
 #[cfg(windows)]
 mod windows;
 #[cfg(windows)]
-pub use windows::{terminal_size, terminal_size_using_handle};
+pub use crate::windows::{terminal_size, terminal_size_using_handle};
 
 #[cfg(not(any(unix, windows)))]
 pub fn terminal_size() -> Option<(Width, Height)> { None }
