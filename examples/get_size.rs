@@ -25,17 +25,19 @@ fn run() {
 
 #[cfg(not(windows))]
 fn run() {
+    use std::os::unix::io::AsRawFd;
+
     println!(
         "Size from terminal_size_using_fd(stdout):     {:?}",
-        terminal_size::terminal_size_using_fd(libc::STDOUT_FILENO)
+        terminal_size::terminal_size_using_fd(std::io::stdout().as_raw_fd())
     );
     println!(
         "Size from terminal_size_using_fd(stderr):     {:?}",
-        terminal_size::terminal_size_using_fd(libc::STDERR_FILENO)
+        terminal_size::terminal_size_using_fd(std::io::stderr().as_raw_fd())
     );
     println!(
         "Size from terminal_size_using_fd(stdin):      {:?}",
-        terminal_size::terminal_size_using_fd(libc::STDIN_FILENO)
+        terminal_size::terminal_size_using_fd(std::io::stdin().as_raw_fd())
     );
 }
 
