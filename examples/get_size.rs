@@ -1,8 +1,9 @@
 #[cfg(windows)]
 fn run() {
     use std::os::windows::io::RawHandle;
-    use winapi::um::processenv::GetStdHandle;
-    use winapi::um::winbase::{STD_ERROR_HANDLE, STD_INPUT_HANDLE, STD_OUTPUT_HANDLE};
+    use windows_sys::Win32::System::Console::{
+        GetStdHandle, STD_ERROR_HANDLE, STD_INPUT_HANDLE, STD_OUTPUT_HANDLE,
+    };
 
     let stdout = unsafe { GetStdHandle(STD_OUTPUT_HANDLE) } as RawHandle;
     println!(
