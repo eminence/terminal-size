@@ -1,36 +1,30 @@
 use super::{Height, Width};
 use std::os::unix::io::RawFd;
+use rustix::fd::{BorrowedFd, AsRawFd};
 
 /// Returns the size of the terminal defaulting to STDOUT, if available.
 ///
 /// If STDOUT is not a tty, returns `None`
 pub fn terminal_size() -> Option<(Width, Height)> {
-    terminal_size_using_fd(libc::STDOUT_FILENO)
+    terminal_size_using_fd(std::io::stdout().as_raw_fd())
 }
 
 /// Returns the size of the terminal using the given file descriptor, if available.
 ///
 /// If the given file descriptor is not a tty, returns `None`
 pub fn terminal_size_using_fd(fd: RawFd) -> Option<(Width, Height)> {
-    use libc::ioctl;
-    use libc::isatty;
-    use libc::{winsize as WinSize, TIOCGWINSZ};
-    let is_tty: bool = unsafe { isatty(fd) == 1 };
+    use rustix::termios::{isatty, tcgetwinsize};
 
-    if !is_tty {
+    // TODO: Once I/O safety is stabilized, the enlosing function here should
+    // be unsafe due to taking a `RawFd`. We should then move the main
+    // logic here into a new function which takes a `BorrowedFd` and is safe.
+    let fd = unsafe { BorrowedFd::borrow_raw(fd) };
+
+    if !isatty(fd) {
         return None;
     }
 
-    let mut winsize = WinSize {
-        ws_row: 0,
-        ws_col: 0,
-        ws_xpixel: 0,
-        ws_ypixel: 0,
-    };
-
-    if unsafe { ioctl(fd, TIOCGWINSZ.into(), &mut winsize) } == -1 {
-        return None;
-    }
+    let winsize = tcgetwinsize(fd).ok()?;
 
     let rows = winsize.ws_row;
     let cols = winsize.ws_col;

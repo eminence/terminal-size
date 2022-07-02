@@ -16,6 +16,7 @@ jobs:
     strategy:
       matrix:
         build: [linux, macos, windows]
+        toolchain: ["1.48.0", "stable", "beta", "nightly"]
         include:
           - build: linux
             os: ubuntu-latest

@@ -2,7 +2,7 @@
 //!
 //! Supports both Linux, MacOS, and Windows.
 //!
-//!  This crate requires a minimum rust version of 1.31.0 (2018-12-06)
+//!  This crate requires a minimum rust version of 1.48.0 (2020-11-19)
 //!
 //! # Example
 //!
