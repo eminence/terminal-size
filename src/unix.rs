@@ -1,12 +1,12 @@
 use super::{Height, Width};
 use std::os::unix::io::RawFd;
-use rustix::fd::{BorrowedFd, AsRawFd};
+use rustix::fd::BorrowedFd;
 
 /// Returns the size of the terminal defaulting to STDOUT, if available.
 ///
 /// If STDOUT is not a tty, returns `None`
 pub fn terminal_size() -> Option<(Width, Height)> {
-    terminal_size_using_fd(std::io::stdout().as_raw_fd())
+    terminal_size_using_fd(rustix::io::raw_stdout())
 }
 
 /// Returns the size of the terminal using the given file descriptor, if available.
