@@ -10,10 +10,11 @@ on:
       - master
 
 jobs:
-  test:
-    name: Test
+  build:
+    name: Build
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         build: [linux, macos, windows]
         toolchain: ["1.48.0", "stable", "beta", "nightly"]
@@ -28,9 +29,47 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ matrix.toolchain }}
+      - name: Install toolchains (aarch64)
+        uses: actions-rs/toolchain@v1
+        if: contains(matrix.os, 'ubuntu')
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          target: aarch64-linux-android
+      - name: Install toolchains (i686)
+        uses: actions-rs/toolchain@v1
+        if: contains(matrix.os, 'ubuntu')
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          target: i686-unknown-linux-gnu
 
       - uses: actions-rs/cargo@v1
+        name: Cargo build
         with:
           command: build
+          toolchain: ${{ matrix.toolchain }}
+
+      - name: cargo build (aarch64)
+        run: cargo +${{ matrix.toolchain }} check --target aarch64-linux-android
+        if: contains(matrix.os, 'ubuntu')
+      - name: cargo build (i686)
+        run: cargo +${{ matrix.toolchain }} check --target i686-unknown-linux-gnu
+        if: contains(matrix.os, 'ubuntu')
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: actions-rs/cargo@v1
+        name: Install faketty
+        with:
+          command: install
+          args: faketty
+
+      - name: Cargo test (under faketty)
+        run: faketty cargo test -- --nocapture
 
