@@ -10,8 +10,8 @@ on:
       - master
 
 jobs:
-  test:
-    name: Test
+  build:
+    name: Build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -55,3 +55,21 @@ jobs:
       - name: cargo build (i686)
         run: cargo +${{ matrix.toolchain }} check --target i686-unknown-linux-gnu
         if: contains(matrix.os, 'ubuntu')
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: actions-rs/cargo@v1
+        name: Install faketty
+        with:
+          command: install
+          args: faketty
+
+      - name: Cargo test (under faketty)
+        run: faketty cargo test -- --nocapture
+
