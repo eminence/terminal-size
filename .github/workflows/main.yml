@@ -30,31 +30,36 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.toolchain }}
-      - name: Install toolchains (aarch64)
-        uses: actions-rs/toolchain@v1
-        if: contains(matrix.os, 'ubuntu')
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          target: aarch64-linux-android
-      - name: Install toolchains (i686)
-        uses: actions-rs/toolchain@v1
-        if: contains(matrix.os, 'ubuntu')
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          target: i686-unknown-linux-gnu
-
       - uses: actions-rs/cargo@v1
         name: Cargo build
         with:
           command: build
           toolchain: ${{ matrix.toolchain }}
 
+  cross:
+    name: Cross
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [1.48.0, stable, beta, nightly]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install toolchains (aarch64)
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          target: aarch64-linux-android
+      - name: Install toolchains (i686)
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          target: i686-unknown-linux-gnu
       - name: cargo build (aarch64)
         run: cargo +${{ matrix.toolchain }} check --target aarch64-linux-android
-        if: contains(matrix.os, 'ubuntu')
       - name: cargo build (i686)
         run: cargo +${{ matrix.toolchain }} check --target i686-unknown-linux-gnu
-        if: contains(matrix.os, 'ubuntu')
 
   test:
     name: Test
@@ -72,4 +77,3 @@ jobs:
 
       - name: Cargo test (under faketty)
         run: faketty cargo test -- --nocapture
-
