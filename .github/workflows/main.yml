@@ -44,9 +44,9 @@ jobs:
           toolchain: ${{ matrix.toolchain }}
           targets: aarch64-linux-android,i686-unknown-linux-gnu
       - name: Cargo check (aarch64)
-        run: cargo +${{ matrix.toolchain }} check --target aarch64-linux-android
+        run: cargo check --target aarch64-linux-android
       - name: Cargo check (i686)
-        run: cargo +${{ matrix.toolchain }} check --target i686-unknown-linux-gnu
+        run: cargo check --target i686-unknown-linux-gnu
 
   test:
     name: Test
