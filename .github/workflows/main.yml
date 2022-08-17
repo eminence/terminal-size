@@ -19,8 +19,10 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         toolchain: [1.48.0, stable, beta, nightly]
     steps:
-      - uses: actions/checkout@v2
-      - uses: dtolnay/rust-toolchain@master
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
       - name: Cargo build
@@ -41,17 +43,19 @@ jobs:
         with:
           toolchain: ${{ matrix.toolchain }}
           targets: aarch64-linux-android,i686-unknown-linux-gnu
-      - name: cargo build (aarch64)
+      - name: Cargo check (aarch64)
         run: cargo +${{ matrix.toolchain }} check --target aarch64-linux-android
-      - name: cargo build (i686)
+      - name: Cargo check (i686)
         run: cargo +${{ matrix.toolchain }} check --target i686-unknown-linux-gnu
 
   test:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: dtolnay/rust-toolchain@stable
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@stable
       - name: Install faketty
         run: cargo install faketty
       - name: Cargo test (under faketty)
