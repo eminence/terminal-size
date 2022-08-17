@@ -27,14 +27,11 @@ jobs:
             os: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
-      - uses: actions-rs/cargo@v1
-        name: Cargo build
-        with:
-          command: build
-          toolchain: ${{ matrix.toolchain }}
+      - name: Cargo build
+        run: cargo build
 
   cross:
     name: Cross
@@ -46,16 +43,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Install toolchains (aarch64)
-        uses: actions-rs/toolchain@v1
+      - name: Install toolchain and targets
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
-          target: aarch64-linux-android
-      - name: Install toolchains (i686)
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          target: i686-unknown-linux-gnu
+          targets: aarch64-linux-android,i686-unknown-linux-gnu
       - name: cargo build (aarch64)
         run: cargo +${{ matrix.toolchain }} check --target aarch64-linux-android
       - name: cargo build (i686)
@@ -66,14 +58,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - uses: actions-rs/cargo@v1
-        name: Install faketty
-        with:
-          command: install
-          args: faketty
-
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install faketty
+        run: cargo install faketty
       - name: Cargo test (under faketty)
         run: faketty cargo test -- --nocapture
