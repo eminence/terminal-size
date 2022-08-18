@@ -18,9 +18,9 @@
 //! ```
 //!
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Width(pub u16);
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Height(pub u16);
 
 #[cfg(unix)]
