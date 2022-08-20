@@ -16,60 +16,47 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build: [linux, macos, windows]
-        toolchain: ["1.48.0", "stable", "beta", "nightly"]
-        include:
-          - build: linux
-            os: ubuntu-latest
-          - build: macos
-            os: macos-latest
-          - build: windows
-            os: windows-latest
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        toolchain: [1.48.0, stable, beta, nightly]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
-      - name: Install toolchains (aarch64)
-        uses: actions-rs/toolchain@v1
-        if: contains(matrix.os, 'ubuntu')
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          target: aarch64-linux-android
-      - name: Install toolchains (i686)
-        uses: actions-rs/toolchain@v1
-        if: contains(matrix.os, 'ubuntu')
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          target: i686-unknown-linux-gnu
+      - name: Cargo build
+        run: cargo build
 
-      - uses: actions-rs/cargo@v1
-        name: Cargo build
+  cross:
+    name: Cross
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [1.48.0, stable, beta, nightly]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install toolchain and targets
+        uses: dtolnay/rust-toolchain@master
         with:
-          command: build
           toolchain: ${{ matrix.toolchain }}
-
-      - name: cargo build (aarch64)
-        run: cargo +${{ matrix.toolchain }} check --target aarch64-linux-android
-        if: contains(matrix.os, 'ubuntu')
-      - name: cargo build (i686)
-        run: cargo +${{ matrix.toolchain }} check --target i686-unknown-linux-gnu
-        if: contains(matrix.os, 'ubuntu')
+          targets: aarch64-linux-android,i686-unknown-linux-gnu
+      - name: Cargo check (aarch64)
+        run: cargo check --target aarch64-linux-android
+      - name: Cargo check (i686)
+        run: cargo check --target i686-unknown-linux-gnu
 
   test:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - uses: actions-rs/cargo@v1
-        name: Install faketty
-        with:
-          command: install
-          args: faketty
-
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install faketty
+        run: cargo install faketty
       - name: Cargo test (under faketty)
         run: faketty cargo test -- --nocapture
-
