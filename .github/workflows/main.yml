@@ -59,7 +59,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
       - name: Install faketty
         run: cargo install faketty
       - name: Cargo test (under faketty)
