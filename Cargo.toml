@@ -1,6 +1,6 @@
 [package]
 name = "terminal_size"
-version = "0.2.6"
+version = "0.3.0"
 authors = ["Andrew Chin <achin@eminence32.net>"]
 description = "Gets the size of your Linux or Windows terminal"
 documentation = "https://docs.rs/crate/terminal_size"
