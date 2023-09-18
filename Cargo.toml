@@ -8,6 +8,7 @@ repository = "https://github.com/eminence/terminal-size"
 keywords = ["terminal", "console", "term", "size", "dimensions"]
 license = "MIT OR Apache-2.0"
 edition = "2021"
+rust-version = "1.63"
 
 
 [target.'cfg(not(windows))'.dependencies]
