@@ -14,21 +14,13 @@ pub fn terminal_size() -> Option<(Width, Height)> {
         GetStdHandle, STD_ERROR_HANDLE, STD_INPUT_HANDLE, STD_OUTPUT_HANDLE,
     };
 
-    if let Some(size) =
-        terminal_size_using_handle(unsafe { GetStdHandle(STD_OUTPUT_HANDLE) as RawHandle })
-    {
-        Some(size)
-    } else if let Some(size) =
-        terminal_size_using_handle(unsafe { GetStdHandle(STD_ERROR_HANDLE) as RawHandle })
-    {
-        Some(size)
-    } else if let Some(size) =
-        terminal_size_using_handle(unsafe { GetStdHandle(STD_INPUT_HANDLE) as RawHandle })
-    {
-        Some(size)
-    } else {
-        None
-    }
+    terminal_size_using_handle(unsafe { GetStdHandle(STD_OUTPUT_HANDLE) as RawHandle })
+        .or_else(|| {
+            terminal_size_using_handle(unsafe { GetStdHandle(STD_ERROR_HANDLE) as RawHandle })
+        })
+        .or_else(|| {
+            terminal_size_using_handle(unsafe { GetStdHandle(STD_INPUT_HANDLE) as RawHandle })
+        })
 }
 
 /// Returns the size of the terminal using the given handle, if available.

@@ -65,14 +65,13 @@ fn compare_with_stty() {
         let vals = String::from_utf8(output.stdout)
             .unwrap()
             .lines()
-            .map(|line| {
+            .flat_map(|line| {
                 // Split each line on semicolons to get "k = v" strings:
                 line.split(';')
                     .map(str::trim)
                     .map(str::to_string)
                     .collect::<Vec<_>>()
             })
-            .flatten()
             .filter_map(|term| {
                 // split each "k = v" string and look for rows/columns:
                 match term.splitn(2, " = ").collect::<Vec<_>>().as_slice() {
@@ -106,8 +105,8 @@ fn compare_with_stty() {
         // stdout is "rows cols"
         let mut data = stdout.split_whitespace();
         println!("{}", stdout);
-        let rows = u16::from_str_radix(data.next().unwrap(), 10).unwrap();
-        let cols = u16::from_str_radix(data.next().unwrap(), 10).unwrap();
+        let rows = data.next().unwrap().parse::<u16>().unwrap();
+        let cols = data.next().unwrap().parse::<u16>().unwrap();
         (rows, cols)
     };
     println!("{} {}", rows, cols);
