@@ -1,3 +1,5 @@
+use crate::WindowSize;
+
 use super::{Height, Width};
 use std::os::windows::io::RawHandle;
 
@@ -21,6 +23,13 @@ pub fn terminal_size() -> Option<(Width, Height)> {
         .or_else(|| {
             terminal_size_using_handle(unsafe { GetStdHandle(STD_INPUT_HANDLE) as RawHandle })
         })
+}
+
+/// Returns the full size of the terminal.
+///
+/// On Windows, the last element is always `None` currently.
+pub fn terminal_size_full() -> Option<(Width, Height, Option<WindowSize>)> {
+    terminal_size().map(|(w, h)| (w, h, None))
 }
 
 /// Returns the size of the terminal using the given handle, if available.

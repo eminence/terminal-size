@@ -1,5 +1,7 @@
+use crate::WindowSize;
+
 use super::{Height, Width};
-use rustix::fd::{BorrowedFd, AsRawFd};
+use rustix::fd::{AsFd, BorrowedFd};
 use std::os::unix::io::RawFd;
 
 /// Returns the size of the terminal.
@@ -8,12 +10,46 @@ use std::os::unix::io::RawFd;
 /// The size of the first stream that is a TTY will be returned.  If nothing
 /// is a TTY, then `None` is returned.
 pub fn terminal_size() -> Option<(Width, Height)> {
-    if let Some(size) = terminal_size_using_fd(std::io::stdout().as_raw_fd()) {
-        Some(size)
-    } else if let Some(size) = terminal_size_using_fd(std::io::stderr().as_raw_fd()) {
-        Some(size)
-    } else if let Some(size) = terminal_size_using_fd(std::io::stdin().as_raw_fd()) {
-        Some(size)
+    terminal_size_full().map(|(width, height, _)| (width, height))
+}
+
+/// Returns the full size of the terminal.
+///
+/// This function checks the stdout, stderr, and stdin streams (in that order).
+/// The size of the first stream that is a TTY will be returned.  If nothing
+/// is a TTY, then `None` is returned.
+pub fn terminal_size_full() -> Option<(Width, Height, Option<WindowSize>)> {
+    terminal_size_full_from_fd(std::io::stdout())
+        .or_else(|| terminal_size_full_from_fd(std::io::stderr()))
+        .or_else(|| terminal_size_full_from_fd(std::io::stdin()))
+}
+
+/// Returns the full size of the terminal under the given file descriptor, if available.
+///
+/// If the file descriptor is not a TTY return `None`; if the underlying terminal does not
+/// report a reasonable window size, the 3rd item in the return value is `None`.
+pub fn terminal_size_full_from_fd<F: AsFd>(fd: F) -> Option<(Width, Height, Option<WindowSize>)> {
+    use rustix::termios::{isatty, tcgetwinsize};
+
+    if !isatty(fd.as_fd()) {
+        return None;
+    }
+
+    let winsize = tcgetwinsize(fd.as_fd()).ok()?;
+
+    let rows = winsize.ws_row;
+    let cols = winsize.ws_col;
+    let window_size = if winsize.ws_xpixel != 0 && winsize.ws_ypixel != 0 {
+        Some(WindowSize {
+            x: winsize.ws_xpixel,
+            y: winsize.ws_ypixel,
+        })
+    } else {
+        None
+    };
+
+    if rows > 0 && cols > 0 {
+        Some((Width(cols), Height(rows), window_size))
     } else {
         None
     }
@@ -21,29 +57,20 @@ pub fn terminal_size() -> Option<(Width, Height)> {
 
 /// Returns the size of the terminal using the given file descriptor, if available.
 ///
-/// If the given file descriptor is not a tty, returns `None`
+/// This function is not IO-safe because it takes a raw file descriptor.  Use
+/// [`terminal_size_full_from_fd`] instead.
+///
+/// If the given file descriptor is not a tty, returns `None`.
+#[deprecated(
+    since = "0.4.0",
+    note = "Not IO-safe, use terminal_size_full_from_fd instead"
+)]
 pub fn terminal_size_using_fd(fd: RawFd) -> Option<(Width, Height)> {
-    use rustix::termios::{isatty, tcgetwinsize};
-
     // TODO: Once I/O safety is stabilized, the enlosing function here should
     // be unsafe due to taking a `RawFd`. We should then move the main
     // logic here into a new function which takes a `BorrowedFd` and is safe.
     let fd = unsafe { BorrowedFd::borrow_raw(fd) };
-
-    if !isatty(fd) {
-        return None;
-    }
-
-    let winsize = tcgetwinsize(fd).ok()?;
-
-    let rows = winsize.ws_row;
-    let cols = winsize.ws_col;
-
-    if rows > 0 && cols > 0 {
-        Some((Width(cols), Height(rows)))
-    } else {
-        None
-    }
+    terminal_size_full_from_fd(fd).map(|(width, height, _)| (width, height))
 }
 
 #[test]
