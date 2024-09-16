@@ -45,14 +45,14 @@ pub fn terminal_size_of<Fd: AsFd>(fd: Fd) -> Option<(Width, Height)> {
 /// The given file descriptor must be an open file descriptor.
 ///
 /// If the given file descriptor is not a tty, returns `None`
+///
+/// # Safety
+///
+/// `fd` must be a valid open file descriptor.
 #[deprecated(note = "Use `terminal_size_of` instead.
      Use `BorrowedFd::borrow_raw` to convert a raw fd into a `BorrowedFd` if needed.")]
-pub fn terminal_size_using_fd(fd: RawFd) -> Option<(Width, Height)> {
-    // SAFETY: Under I/O safety, this function should be `unsafe`, but we can't
-    // remove it without breaking compatibility, so we instead deprecate it.
-    // This unsafe block has the same precondition that the function implicitly
-    // does: `fd` must be an open handle.
-    unsafe { terminal_size_of(BorrowedFd::borrow_raw(fd)) }
+pub unsafe fn terminal_size_using_fd(fd: RawFd) -> Option<(Width, Height)> {
+    terminal_size_of(BorrowedFd::borrow_raw(fd))
 }
 
 #[test]
