@@ -14,17 +14,17 @@ pub fn terminal_size() -> Option<(Width, Height)> {
         GetStdHandle, STD_ERROR_HANDLE, STD_INPUT_HANDLE, STD_OUTPUT_HANDLE,
     };
 
-    if let Some(size) =
-        terminal_size_using_handle(unsafe { GetStdHandle(STD_OUTPUT_HANDLE) as RawHandle })
-    {
+    if let Some(size) = terminal_size_of(unsafe {
+        BorrowedHandle::borrow_raw(GetStdHandle(STD_OUTPUT_HANDLE) as RawHandle)
+    }) {
         Some(size)
-    } else if let Some(size) =
-        terminal_size_using_handle(unsafe { GetStdHandle(STD_ERROR_HANDLE) as RawHandle })
-    {
+    } else if let Some(size) = terminal_size_of(unsafe {
+        BorrowedHandle::borrow_raw(GetStdHandle(STD_ERROR_HANDLE) as RawHandle)
+    }) {
         Some(size)
-    } else if let Some(size) =
-        terminal_size_using_handle(unsafe { GetStdHandle(STD_INPUT_HANDLE) as RawHandle })
-    {
+    } else if let Some(size) = terminal_size_of(unsafe {
+        BorrowedHandle::borrow_raw(GetStdHandle(STD_INPUT_HANDLE) as RawHandle)
+    }) {
         Some(size)
     } else {
         None
@@ -74,10 +74,12 @@ pub fn terminal_size_of<Handle: AsHandle>(handle: Handle) -> Option<(Width, Heig
 /// The given handle must be an open handle.
 ///
 /// If the given handle is not a tty, returns `None`
-pub fn terminal_size_using_handle(handle: RawHandle) -> Option<(Width, Height)> {
-    // SAFETY: Under I/O safety, this function should be `unsafe`, but we can't
-    // remove it without breaking compatibility, so we instead deprecate it.
-    // This unsafe block has the same precondition that the function implicitly
-    // does: `handle` must be a valid open file descriptor.
-    unsafe { terminal_size_of(BorrowedHandle::borrow_raw(handle)) }
+///
+/// # Safety
+///
+/// `handle` must be a valid open file handle.
+#[deprecated(note = "Use `terminal_size_of` instead.
+     Use `BorrowedHandle::borrow_raw` to convert a raw handle into a `BorrowedHandle` if needed.")]
+pub unsafe fn terminal_size_using_handle(handle: RawHandle) -> Option<(Width, Height)> {
+    terminal_size_of(BorrowedHandle::borrow_raw(handle))
 }
