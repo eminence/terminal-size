@@ -1,6 +1,6 @@
 [package]
 name = "terminal_size"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["Andrew Chin <achin@eminence32.net>"]
 description = "Gets the size of your Linux or Windows terminal"
 documentation = "https://docs.rs/terminal_size"
@@ -11,7 +11,7 @@ edition = "2021"
 rust-version = "1.63"
 
 
-[target.'cfg(not(windows))'.dependencies]
+[target.'cfg(unix)'.dependencies]
 rustix = { version = "0.38.0", features = ["termios"] }
 
 [target.'cfg(windows)'.dependencies.windows-sys]
