@@ -12,7 +12,7 @@ rust-version = "1.63"
 
 
 [target.'cfg(unix)'.dependencies]
-rustix = { version = "0.38.0", features = ["termios"] }
+rustix = { version = "1.0.1", features = ["termios"] }
 
 [target.'cfg(windows)'.dependencies.windows-sys]
 version = "0.59.0"
