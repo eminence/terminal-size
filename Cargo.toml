@@ -15,7 +15,7 @@ rust-version = "1.63"
 rustix = { version = "1.0.1", features = ["termios"] }
 
 [target.'cfg(windows)'.dependencies.windows-sys]
-version = "0.59.0"
+version = "0.60.0"
 features = [
     "Win32_Foundation",
     "Win32_System_Console",
