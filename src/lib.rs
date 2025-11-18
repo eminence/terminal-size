@@ -2,7 +2,7 @@
 //!
 //! Works on Linux, macOS, Windows, and illumos.
 //!
-//! This crate requires a minimum Rust version of 1.63.0 (2022-08-11).
+//! This crate requires a minimum Rust version of 1.71.0 (2023-07-13).
 //!
 //! # Example
 //!
