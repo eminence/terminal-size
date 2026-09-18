@@ -23,19 +23,31 @@ pub struct Width(pub u16);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Height(pub u16);
 
-#[cfg(unix)]
-mod unix;
-#[cfg(unix)]
+mod sys;
+
+#[cfg(any(
+    unix,
+    target_os = "hermit",
+    target_os = "motor",
+    target_os = "trusty",
+    target_os = "wasi"
+))]
 #[allow(deprecated)]
-pub use crate::unix::{terminal_size, terminal_size_of, terminal_size_using_fd};
+pub use crate::sys::fd::{terminal_size, terminal_size_of, terminal_size_using_fd};
 
 #[cfg(windows)]
-mod windows;
-#[cfg(windows)]
 #[allow(deprecated)]
-pub use crate::windows::{terminal_size, terminal_size_of, terminal_size_using_handle};
+pub use crate::sys::windows::{terminal_size, terminal_size_of, terminal_size_using_handle};
 
-#[cfg(not(any(unix, windows)))]
-pub fn terminal_size() -> Option<(Width, Height)> {
-    None
-}
+#[cfg(all(
+    feature = "unsupported",
+    not(any(
+        unix,
+        windows,
+        target_os = "hermit",
+        target_os = "motor",
+        target_os = "trusty",
+        target_os = "wasi"
+    ))
+))]
+pub use crate::sys::unsupported::terminal_size;

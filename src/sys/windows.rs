@@ -1,4 +1,4 @@
-use super::{Height, Width};
+use crate::{Height, Width};
 use std::os::windows::io::{AsHandle, AsRawHandle, BorrowedHandle, RawHandle};
 
 /// Returns the size of the terminal.
