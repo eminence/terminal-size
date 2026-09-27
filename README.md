@@ -18,6 +18,9 @@ if let Some((Width(w), Height(h))) = size {
 }
 ```
 
+On Unix, `terminal_size()` checks stdout, stderr, and stdin in that order. If
+none provides a size, it tries the controlling terminal at `/dev/tty`.
+
 ## License
 
 Licensed under either of

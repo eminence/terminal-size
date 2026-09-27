@@ -3,9 +3,9 @@ use std::os::unix::io::{AsFd, BorrowedFd, RawFd};
 
 /// Returns the size of the terminal.
 ///
-/// This function checks the stdout, stderr, and stdin streams (in that order).
-/// The size of the first stream that is a TTY will be returned.  If nothing
-/// is a TTY, then `None` is returned.
+/// This function checks stdout, stderr, and stdin (in that order), then the
+/// controlling terminal at `/dev/tty`. It returns the first available size,
+/// or `None` if no terminal size is available.
 pub fn terminal_size() -> Option<(Width, Height)> {
     if let Some(size) = terminal_size_of(std::io::stdout()) {
         Some(size)
@@ -14,7 +14,9 @@ pub fn terminal_size() -> Option<(Width, Height)> {
     } else if let Some(size) = terminal_size_of(std::io::stdin()) {
         Some(size)
     } else {
-        None
+        std::fs::File::open("/dev/tty")
+            .ok()
+            .and_then(terminal_size_of)
     }
 }
 
