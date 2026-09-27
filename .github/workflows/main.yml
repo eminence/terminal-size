@@ -89,4 +89,6 @@ jobs:
         env:
           RUSTC_BOOTSTRAP: 1
       - name: Cargo test (under faketty)
+        env:
+          TERMINAL_SIZE_TEST_REQUIRE_TTY: "1"
         run: faketty cargo test --locked -- --nocapture
